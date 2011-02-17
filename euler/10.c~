@@ -1,0 +1,70 @@
+/*
+  Euler Project
+  #10
+
+  Problem:
+  The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+
+  Find the sum of all the primes below two million.
+  
+  Mauro Parra-Miranda
+  mauropm@gmail.com
+*/
+
+#include <stdio.h> 
+#include <stdlib.h>
+#include <string.h> 
+
+int getbitat(int *bitset, int index){
+  int i= index/32;
+  int j= index%32;
+  int lim = sizeof(bitset)/sizeof(*bitset);
+  int mask =1;
+  mask<<j;
+  if (i<lim)
+    return (bitset[i]&mask); 
+  else {
+    printf("Error, invalid index: %d",i);
+    return 0;
+  }
+}
+
+int setbitat(int *bitset, int index, int val){
+  int i= index/32;
+  int j= index%32;
+  int lim = sizeof(bitset)/sizeof(*bitset);
+  int mask =1;
+  mask<<j;
+  if (i<lim){
+    if(val==0){
+      bitset[i]^=mask; 
+    } else { 
+      mask = ~mask; 
+      bitset[i]&=mask; 
+    }
+  } else {
+    printf("Error, invalid index: %d",i);
+    return 0;
+  }
+}    
+
+int main(int argc, char *argv[]){ 
+  int limit=atoi(argv[1]);
+  int *bitsets = malloc(sizeof(int)*(limit/32 + 1)); 
+  int i = 0; 
+  int j = 0; 
+  int ilimit = limit/32+1; 
+  for(i = 0; i<limit; i++){
+    setbitat(bitsets,i,1); 
+    printf("%d\n",getbitat(bitsets,i));
+  }
+  for(i = 2; i<limit; i++) 
+    if(getbitat(bitsets,i))
+      for(j = i+1; j<limit; j++)
+	if(getbitat(bitsets,j))
+	  if((j%i)==0)
+	    setbitat(bitsets,j,0); 
+  for(i = 0; i<limit; i++)
+    if(getbitat(bitsets,i))
+      printf("%d\n",i);
+}
